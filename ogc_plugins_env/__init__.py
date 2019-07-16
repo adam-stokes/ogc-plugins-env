@@ -31,25 +31,24 @@ class Env(SpecPlugin):
     """
 
     NAME = "Env Plugin"
-    options = {'requires': None,
-               'properties_file': None}
+    options = [("requires", True), ("properties_file", False)]
 
     def __load_dotenv(self, env, path):
         if not path.exists():
             return env
-        _merge_env = DotEnv(dotenv_path=path, encoding='utf8').dict()
+        _merge_env = DotEnv(dotenv_path=path, encoding="utf8").dict()
         return env + _merge_env
 
     def process(self):
         """ Processes env options
         """
         env = MeldDict(os.environ.copy())
-        check_requires = self.get_option('requires')
+        check_requires = self.get_option("requires")
 
         # Check for a relative .env and load thoes
-        relative_env_path = Path('.') / '.env'
+        relative_env_path = Path(".") / ".env"
         env = self.__load_dotenv(env, relative_env_path)
-        properties_file = self.get_option('properties_file')
+        properties_file = self.get_option("properties_file")
         if properties_file:
             env = self.__load_dotenv(env, Path(properties_file))
         log.debug(f"{self.NAME} - requires {', '.join(check_requires)}")
