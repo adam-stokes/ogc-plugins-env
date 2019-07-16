@@ -9,6 +9,7 @@ from pprint import pformat
 from melddict import MeldDict
 from pathlib import Path
 from ogc import log
+from ogc.state import app
 from ogc.spec import SpecPlugin
 
 
@@ -42,7 +43,7 @@ class Env(SpecPlugin):
     def process(self):
         """ Processes env options
         """
-        env = MeldDict(os.environ.copy())
+        env = MeldDict(app.env)
         check_requires = self.get_option("requires")
 
         # Check for a relative .env and load thoes
@@ -57,4 +58,7 @@ class Env(SpecPlugin):
             env_differ = ", ".join(list(set(check_requires).difference(env)))
             log.error(f"{self.NAME} - {env_differ} not found in host environment")
             sys.exit(1)
+
+        # Save final environment variables
+        app.env = env.copy()
         return
