@@ -10,7 +10,7 @@ from melddict import MeldDict
 from pathlib import Path
 from ogc import log
 from ogc.state import app
-from ogc.spec import SpecPlugin
+from ogc.spec import SpecPlugin, SpecProcessException
 
 
 class Env(SpecPlugin):
@@ -32,7 +32,7 @@ class Env(SpecPlugin):
     """
 
     NAME = "Env Plugin"
-    options = [("requires", True), ("properties_file", False)]
+    options = [("requires", False), ("properties_file", False)]
 
     def __load_dotenv(self, env, path):
         if not path.exists():
@@ -50,14 +50,13 @@ class Env(SpecPlugin):
         relative_env_path = Path(".") / ".env"
         env = self.__load_dotenv(env, relative_env_path)
         properties_file = self.get_option("properties_file")
+
         if properties_file:
             env = self.__load_dotenv(env, Path(properties_file))
-        log.debug(f"{self.NAME} - requires {', '.join(check_requires)}")
-        log.debug(f"{self.NAME} - testing against\n  {pformat(env)}")
+
         if check_requires and not set(check_requires) < set(env):
             env_differ = ", ".join(list(set(check_requires).difference(env)))
-            log.error(f"{self.NAME} - {env_differ} not found in host environment")
-            sys.exit(1)
+            raise SpecProcessException(f"{self.NAME} - {env_differ} not found in host environment")
 
         # Save final environment variables
         app.env = env.copy()
