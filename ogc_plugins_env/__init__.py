@@ -33,7 +33,6 @@ class Env(SpecPlugin):
     slug = "env-plugin"
     options = [("requires", False), ("properties_file", False)]
 
-
     def conflicts(self):
         """ Handles any environment conflicts
         """
@@ -42,5 +41,9 @@ class Env(SpecPlugin):
         check_requires = [item.replace(".", "_").upper() for item in check_requires]
         existing_env_vars = [*app.env]
         if check_requires and not set(check_requires) < set(existing_env_vars):
-            env_differ = ", ".join(list(set(check_requires).difference(existing_env_vars)))
-            raise SpecProcessException(f"{self.friendly_name} - {env_differ} not found in host environment. Did you forget to add them to `add_to_env`?")
+            env_differ = ", ".join(
+                list(set(check_requires).difference(existing_env_vars))
+            )
+            raise SpecProcessException(
+                f"{self.friendly_name} - {env_differ} not found in host environment. Did you forget to add them to `add_to_env`?"
+            )
