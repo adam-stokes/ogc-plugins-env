@@ -1,14 +1,6 @@
 """ OGC Env Plugin - environment variable discovery
 """
 
-import os
-import click
-import sys
-from dotenv.main import DotEnv
-from pprint import pformat
-from melddict import MeldDict
-from pathlib import Path
-from ogc import log
 from ogc.state import app
 from ogc.spec import SpecPlugin, SpecProcessException
 
@@ -29,35 +21,26 @@ class Env(SpecPlugin):
     # Optionally, define a location of KEY=VALUE line items to use as this specs
     # environment variables. This will meld into host environment updating any variables overlapping
     properties_file = "/home/user/env.properties"
+
+    # Convert certain spec options to ane environment variable, these variables
+    # will be set in the host environment in the form of VAR=VAL. Note: this
+    # will convert the dot '.' notation to underscores
+    add_to_env = ['Juju.cloud', 'Juju.controller']
+
     """
 
-    NAME = "Env Plugin"
+    friendly_name = "Env Plugin"
+    slug = "env-plugin"
     options = [("requires", False), ("properties_file", False)]
 
-    def __load_dotenv(self, env, path):
-        if not path.exists():
-            return env
-        _merge_env = DotEnv(dotenv_path=path, encoding="utf8").dict()
-        return env + _merge_env
 
-    def process(self):
-        """ Processes env options
+    def conflicts(self):
+        """ Handles any environment conflicts
         """
-        env = MeldDict(app.env)
-        check_requires = self.get_option("requires")
-
-        # Check for a relative .env and load thoes
-        relative_env_path = Path(".") / ".env"
-        env = self.__load_dotenv(env, relative_env_path)
-        properties_file = self.get_option("properties_file")
-
-        if properties_file:
-            env = self.__load_dotenv(env, Path(properties_file))
-
-        if check_requires and not set(check_requires) < set(env):
-            env_differ = ", ".join(list(set(check_requires).difference(env)))
-            raise SpecProcessException(f"{self.NAME} - {env_differ} not found in host environment")
-
-        # Save final environment variables
-        app.env = env.copy()
-        return
+        # Parse requirements
+        check_requires = self.get_spec_option("Env.requires")
+        check_requires = [item.replace(".", "_").upper() for item in check_requires]
+        existing_env_vars = [*app.env]
+        if check_requires and not set(check_requires) < set(existing_env_vars):
+            env_differ = ", ".join(list(set(check_requires).difference(existing_env_vars)))
+            raise SpecProcessException(f"{self.friendly_name} - {env_differ} not found in host environment. Did you forget to add them to `add_to_env`?")
