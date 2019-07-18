@@ -45,5 +45,5 @@ class Env(SpecPlugin):
                 list(set(check_requires).difference(existing_env_vars))
             )
             raise SpecProcessException(
-                f"{self.friendly_name} - {env_differ} not found in host environment. Did you forget to add them to `add_to_env`?"
+                f"{self.friendly_name} - {env_differ} not found in host environment. See `ogc spec-doc Env`."
             )
