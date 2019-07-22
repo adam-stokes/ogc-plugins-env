@@ -17,9 +17,18 @@ class Env(SpecPlugin):
     friendly_name = "OGC Env Plugin"
     description = "Environment variable discovery"
     options = [
-        {"key": "requires", "required": False, "description": "Environment variables that need to exist before the spec can be run"},
-        {"key": "properties_file", "required": False, "description": "A path to a DotEnv or the like for loading environment variables"},
+        {
+            "key": "requires",
+            "required": False,
+            "description": "Environment variables that need to exist before the spec can be run",
+        },
+        {
+            "key": "properties_file",
+            "required": False,
+            "description": "A path to a DotEnv or the like for loading environment variables",
+        },
     ]
+
     def conflicts(self):
         """ Handles any environment conflicts
         """
@@ -37,7 +46,8 @@ class Env(SpecPlugin):
 
     @classmethod
     def doc_example(cls):
-        return textwrap.dedent("""
+        return textwrap.dedent(
+            """
         ## Example
 
         ```toml
@@ -60,6 +70,8 @@ class Env(SpecPlugin):
         # will convert the dot '.' notation to underscores
         add_to_env = ['Juju.cloud', 'Juju.controller']
         ```
-        """)
+        """
+        )
+
 
 __class_plugin_obj__ = Env
