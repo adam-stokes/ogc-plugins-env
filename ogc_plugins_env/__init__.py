@@ -55,8 +55,6 @@ class Env(SpecPlugin):
         requires = ["CHARMCREDS", "JUJUCREDS"]
 
         properties_file = "/home/user/env.properties"
-
-        add_to_env = ['Juju.cloud', 'Juju.controller']
         ```
         """
         )
