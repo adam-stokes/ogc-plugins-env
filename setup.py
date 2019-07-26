@@ -6,7 +6,7 @@ README = README.read_text(encoding="utf8")
 
 setuptools.setup(
     name="ogc-plugins-env",
-    version="0.0.5",
+    version="0.0.6",
     author="Adam Stokes",
     author_email="adam.stokes@ubuntu.com",
     description="ogc-plugins-env, a ogc plugin for environment discovery",
@@ -18,6 +18,6 @@ setuptools.setup(
     install_requires=[
         "ogc>=0.1.5,<1.0.0",
         "click>=7.0.0,<8.0.0",
-        "python-dotenv==0.10.3",
+        "python-dotenv>=0.10.3,<1.0.0",
     ],
 )
