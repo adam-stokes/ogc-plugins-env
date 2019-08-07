@@ -21,4 +21,5 @@ setuptools.setup(
         "click>=7.0.0,<8.0.0",
         "python-dotenv>=0.10.3,<1.0.0",
     ],
+    zip_safe=False,
 )
